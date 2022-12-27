@@ -1,39 +1,50 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CharController : MonoBehaviour
+namespace Runner
 {
-    [SerializeField] private GameObject _camera;
-    [SerializeField] float _speed = 6f;
-    [SerializeField] float _sideSpeed = 2;
-    [SerializeField] float _deadZoneRoatition = 10;
 
-    private Rigidbody _player;
-
-    private void Start()
+    public class CharController : MonoBehaviour
     {
-        _player = GetComponent<Rigidbody>();
-    }
+        [SerializeField] private GameObject _camera;
+        [SerializeField] float _speed = 6f;
+        [SerializeField] float _sideSpeed = 2;
+        [SerializeField] float _deadZoneRoatition = 10;
 
-    private void Update()
-    {
-        Vector3 dir = _player.velocity;
+        private Rigidbody _player;
+        private bool _isDead = false;
 
-        float cameraZ = _camera.transform.rotation.eulerAngles.z;
-
-        if (cameraZ > _deadZoneRoatition && cameraZ < 180)
+        private void Start()
         {
-            dir.x = cameraZ * -1 * _speed * Time.deltaTime;
-        }
-        if (cameraZ > 180 && cameraZ <= 360-_deadZoneRoatition)
-        {
-            dir.x =(360- cameraZ) * _speed * Time.deltaTime;
+            _player = GetComponent<Rigidbody>();
         }
 
-        dir.x = Input.GetAxis("Horizontal") * _speed;
-        dir.z = _speed;
+        public void Death()
+        {
+            _isDead = true;
+        }
 
-        _player.velocity = dir;
+        private void Update()
+        {
+            if (!_isDead)
+            {
+                Vector3 dir = _player.velocity;
+
+                float cameraZ = _camera.transform.rotation.eulerAngles.z;
+
+                if (cameraZ > _deadZoneRoatition && cameraZ < 180)
+                {
+                    dir.x = cameraZ * -1 * _speed * Time.deltaTime;
+                }
+                if (cameraZ > 180 && cameraZ <= 360 - _deadZoneRoatition)
+                {
+                    dir.x = (360 - cameraZ) * _speed * Time.deltaTime;
+                }
+
+                dir.x = Input.GetAxis("Horizontal") * _speed;
+                dir.z = _speed;
+
+                _player.velocity = dir;
+            }
+        }
     }
 }

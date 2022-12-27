@@ -1,23 +1,22 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Runner
 {
     public class PlayerCollision : MonoBehaviour
     {
-        [SerializeField] private DeathScreen deathScreen;
-        private Collider _playerCollider;
-
-        void Start()
-        {
-            _playerCollider.GetComponent<Collider>();
-        }
+        [SerializeField] private Transform _deathPoint;
+        [SerializeField] private WinOrDeathScreen _winOrDeath;
 
         private void OnCollisionEnter(Collision collision)
         {
             if (collision.gameObject.CompareTag("Obstacle"))
             {
-                deathScreen.gameObject.SetActive(true);
+                gameObject.GetComponent<CharController>().Death();
+                gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+                _winOrDeath.WinOrDeath(false);
+
+                transform.position = _deathPoint.position;
             }
         }
     }
